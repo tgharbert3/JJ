@@ -77,6 +77,9 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 		}
 		echo "David Powers</p>";
 		echo "</footer>";
+		echo "</div>";
+		echo "</body>";
+		echo "</html>";
 		exit;
 	}
 }
@@ -93,45 +96,34 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 			echo '<h3 class="warning"> Please fix the following: </h3>';
 		}
 		?>
-		<p>
-
-			<label for="name">Name</label>
-			<?php
-			if (!empty($missing['name'])) {
-				echo '<p class="warning">' . $missing['name'] . '</p>';
-			}
-			?>
-			<input type="text" name="name" id=name <?php
-			if (isset($name)) {
-				echo ' value = "' . htmlspecialchars($name) . '"';
-			}
-			?>>
-		</p>
-		<p>
-			<?php
-			if (!empty($missing['email'])) {
-				echo '<p class="warning">' . $missing['email'] . '</p>';
-			}
-			?>
-			<label for="email">Email:</label>
-			<?php
-			if (!empty($missing['name'])) {
-				echo '<p class="warning">' . $missing['name'] . '</p>';
-			}
-			?>
-			<input type="text" name="email" id="email" <?php
-			if (isset($email)) {
-				echo ' value = "' . htmlspecialchars($email) . '"';
-			}
-			?>>
-		<p>
-			<label>Comments: </label>
-			<textarea name="comments"><?php
-			if (isset($comments)) {
-				echo htmlspecialchars($comments);
-			}
-			?></textarea>
-		</p>
+		<label for="name">Name</label>
+		<?php
+		if (!empty($missing['name'])) {
+			echo '<p class="warning">' . $missing['name'] . '</p>';
+		}
+		?>
+		<input type="text" name="name" id=name <?php
+		if (isset($name)) {
+			echo ' value = "' . htmlspecialchars($name) . '"';
+		}
+		?>>
+		<label for="email">Email:</label>
+		<?php
+		if (!empty($missing['email'])) {
+			echo '<p class="warning">' . $missing['email'] . '</p>';
+		}
+		?>
+		<input type="text" name="email" id="email" <?php
+		if (isset($email)) {
+			echo ' value = "' . htmlspecialchars($email) . '"';
+		}
+		?>>
+		<label>Comments: </label>
+		<textarea name="comments"><?php
+		if (isset($comments)) {
+			echo htmlspecialchars($comments);
+		}
+		?></textarea>
 	</fieldset>
 	<br>
 	<fieldset id="subscribe">
