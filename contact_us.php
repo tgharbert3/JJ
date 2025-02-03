@@ -45,10 +45,6 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 	}
 
 	if (empty($missing)) {
-		echo '<div id="wrapper">';
-		echo "<main>";
-		echo "<h2>Japan Journey</h2>";
-		echo "<p>Ut enim ad minim veniam, quis nostrud exercitation consectetur adipisicing elit. Velit esse cillum dolore ullamco laboris nisi in reprehenderit in voluptate. Mollit anim id est laborum. Sunt in culpa duis aute irure dolor excepteur sint occaecat.</p>";
 		echo "<h3> Thank you for contacting us</h3>";
 		echo "<h3>You submitted the following: </h3>";
 		echo "<p> Name: $name </p>";
@@ -63,23 +59,7 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 		echo "</ul>";
 		echo "<p>You heard about us how: $select</p>";
 		echo "<p>$terms</p>";
-		echo "</main>";
-		echo "</div>";
-		echo "<footer>";
-		echo "<p>&copy;";
-		date_default_timezone_set("America/New_York");
-		$startYear = 2006;
-		$thisYear = date('Y');
-		if ($startYear == $thisYear) {
-			echo $startYear;
-		} else {
-			echo "$startYear" . '&ndash;' . "$thisYear";
-		}
-		echo "David Powers</p>";
-		echo "</footer>";
-		echo "</div>";
-		echo "</body>";
-		echo "</html>";
+		require("./includes/footer.php");
 		exit;
 	}
 }
