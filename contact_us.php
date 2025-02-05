@@ -47,18 +47,18 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 	if (empty($missing)) {
 		echo "<h3> Thank you for contacting us</h3>";
 		echo "<h3>You submitted the following: </h3>";
-		echo "<p> Name: $name </p>";
-		echo "<p> Email: $email </p>";
-		echo "<p> Comments: $comments </p>";
-		echo "<p> Subscribe: $subscribe </p>";
+		echo "<p> Name: " . htmlspecialchars($name)  . "</p>";
+		echo "<p> Email: " . htmlspecialchars($email) . "</p>";
+		echo "<p> Comments: " . htmlspecialchars($comments) . "</p>";
+		echo "<p> Subscribe: " . htmlspecialchars($subscribe) . "</p>";
 		echo "<p>Interests: </p>";
 		echo "<ul>";
 		foreach ($interests as $key => $value) {
-			echo "<li> $value </li>";
+			echo "<li> " . htmlspecialchars($value) . "</li>";
 		}
 		echo "</ul>";
-		echo "<p>You heard about us how: $select</p>";
-		echo "<p>$terms</p>";
+		echo "<p>You heard about us how: " . htmlspecialchars($select) . "</p>";
+		echo "<p>" . htmlspecialchars($terms) . "</p>";
 		require("./includes/footer.php");
 		exit;
 	}
@@ -76,43 +76,51 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 			echo '<h3 class="warning"> Please fix the following: </h3>';
 		}
 		?>
-		<label for="name">Name</label>
-		<?php
-		if (!empty($missing['name'])) {
-			echo '<p class="warning">' . $missing['name'] . '</p>';
-		}
-		?>
-		<input type="text" name="name" id=name <?php
-		if (isset($name)) {
-			echo ' value = "' . htmlspecialchars($name) . '"';
-		}
-		?>>
-		<label for="email">Email:</label>
-		<?php
-		if (!empty($missing['email'])) {
-			echo '<p class="warning">' . $missing['email'] . '</p>';
-		}
-		?>
-		<input type="text" name="email" id="email" <?php
-		if (isset($email)) {
-			echo ' value = "' . htmlspecialchars($email) . '"';
-		}
-		?>>
-		<label>Comments: </label>
-		<textarea name="comments"><?php
-		if (isset($comments)) {
-			echo htmlspecialchars($comments);
-		}
-		?></textarea>
-	</fieldset>
-	<br>
-	<fieldset id="subscribe">
+		<p>
+			<?php
+			if (!empty($missing['name'])) {
+				echo '<span class="warning">' . $missing['name'] . '</span>';
+			}
+			?>
+			<label for="name">Name</label>
+			<input type="text" name="name" id=name <?php
+			if (isset($name)) {
+				echo ' value = "' . htmlspecialchars($name) . '"';
+			}
+			?>>
 
+		</p>
+
+		<p>
+			<?php
+			if (!empty($missing['email'])) {
+				echo '<span class="warning">' . $missing['email'] . '</span>';
+			}
+			?>
+			<label for="email">Email:</label>
+			<input type="text" name="email" id="email" <?php
+			if (isset($email)) {
+				echo ' value = "' . htmlspecialchars($email) . '"';
+			}
+			?>>
+		</p>
+		
+		<p>
+			<label>Comments: </label>
+			<textarea name="comments"><?php
+			if (isset($comments)) {
+				echo htmlspecialchars($comments);
+			}
+			?></textarea>
+		</p>
+		
+	</fieldset>
+	<fieldset id="subscribe">
 		<h2>Subscribe to newsletter?</h2>
 		<?php
-		if (isset($missing['subscribe'])) {
-			echo '<p class="warning">' . $missing['subscribe'] . '</p>';
-		}
+			if (isset($missing['subscribe'])) {
+				echo '<p class="warning">' . $missing['subscribe'] . '</p>';
+			}
 		?>
 		<p>
 			<label><input type="radio" name="subscribe" value="yes" <?php
@@ -130,12 +138,12 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 		</p>
 	</fieldset>
 	<fieldset id="interests">
-
+		
 		<h2>Interests in Japan</h2>
 		<?php
-		if (isset($missing['interests'])) {
-			echo '<p class="warning">' . $missing['interests'] . '</p>';
-		}
+			if (isset($missing['interests'])) {
+				echo '<p class="warning">' . $missing['interests'] . '</p>';
+			}
 		?>
 		<div>
 			<p><label><input type="checkbox" name="interests[]" value="anime" <?php
@@ -176,30 +184,33 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 		</div>
 	</fieldset>
 	<fieldset>
+
 		<h2>How did you hear of Japan Journey?</h2>
 		<?php
-		if (isset($missing['select'])) {
-			echo '<p class="warning">' . $missing['select'] . '</p>';
-		}
+			if (isset($missing['select'])) {
+				echo '<p class="warning">' . $missing['select'] . '</p>';
+			}
 		?>
-		<select name="select">
-			<option>Select One</option>
-			<option <?php
-			if (isset($select) && $select === "Social Media") {
-				echo " selected";
-			}
-			?>>Social
-				Media </option>
+		<p>	
+			<select name="select">
+				<option>Select One</option>
+				<option <?php
+				if (isset($select) && $select === "Social Media") {
+					echo " selected";
+				}
+				?>>Social
+					Media </option>
 
-			<option <?php
-			if (isset($select) && $select === "Recommended by friends") {
-				echo " selected";
-			}
-			?>>Recommended
-				by friends</option>
-			<option>Search Engine </option>
-		</select>
-
+				<option <?php
+				if (isset($select) && $select === "Recommended by friends") {
+					echo " selected";
+				}
+				?>>Recommended
+					by friends</option>
+				<option>Search Engine </option>
+			</select>
+		</p>
+		
 		<?php
 		if (isset($missing['terms'])) {
 			echo '<p class="warning">' . $missing['terms'] . '</p>';
