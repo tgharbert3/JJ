@@ -1,4 +1,3 @@
-</main>
 <footer>
     <p>&copy;
         <?php
