@@ -17,3 +17,4 @@
     </header>
     <div id="wrapper"> <!--Required for CSS to work properly-->
         <?php include("./includes/menu.php") ?>
+        <main>

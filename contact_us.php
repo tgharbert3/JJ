@@ -4,6 +4,14 @@
 if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 	if (!empty($_GET['name'])) {
 		$name = $_GET['name'];
+		$tempName = explode(" ", $name);
+		$firstName = $tempName[0];
+		if (!empty($tempName[1])) {
+			$lastName = $tempName[1];
+		} else {
+			$lastName = null;
+		}
+
 	} else {
 		$missing['name'] = "A name is required";
 	}
@@ -27,13 +35,42 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 	}
 
 	if (isset($_GET['subscribe'])) {
-		$subscribe = $_GET['subscribe'];
+		$subscribe = 1;
+
 	} else {
 		$missing['subscribe'] = "Please make a selection.";
+		$subscribe = 0;
 	}
 
 	if (isset($_GET['interests'])) {
 		$interests = $_GET['interests'];
+		$anime = 0;
+		$arts = 0;
+		$judo = 0;
+		$langauge = 0;
+		$science = 0;
+		$travel = 0;
+		foreach ($interests as $interest) {
+			if ($interest == "anime") {
+				$anime = 1;
+			}
+			if ($interest == "arts") {
+				$arts = 1;
+			}
+			if ($interest == "judo") {
+				$judo = 1;
+			}
+			if ($interest == "language") {
+				$langauge = 1;
+			}
+			if ($interest == "science") {
+				$science = 1;
+			}
+			if ($interest == "travel") {
+				$travel = 1;
+			}
+		}
+
 	} else {
 		$missing['interests'] = "You must select at least one interest.";
 	}
@@ -45,22 +82,27 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 	}
 
 	if (empty($missing)) {
-		echo "<h3> Thank you for contacting us</h3>";
-		echo "<h3>You submitted the following: </h3>";
-		echo "<p> Name: " . htmlspecialchars($name) . "</p>";
-		echo "<p> Email: " . htmlspecialchars($email) . "</p>";
-		echo "<p> Comments: " . htmlspecialchars($comments) . "</p>";
-		echo "<p> Subscribe: " . htmlspecialchars($subscribe) . "</p>";
-		echo "<p>Interests: </p>";
-		echo "<ul>";
-		foreach ($interests as $key => $value) {
-			echo "<li> " . htmlspecialchars($value) . "</li>";
+		try {
+			if (isset($$lastName)) {
+				echo "<h3> Thank you " . htmlspecialchars($firstName) . " " . htmlspecialchars($lastName) . " for contacting us</h3>";
+			} else {
+				echo "<h3> Thank you " . htmlspecialchars($firstName) . "for contacting us.</h3>";
+			}
+			require_once('../../pdo_connect.php');
+			$sql = "INSERT INTO JJ_contacts (firstName, lastName, emailAddr, comments, newsletter, howhear, anime,
+				arts, judo, lang, sci, travel) VALUES ('$firstName', '$lastName', '$email', '$comments', '$subscribe',
+				'$select', '$anime', '$arts', '$judo', '$langauge', '$science', '$travel')";
+			$affected = $dbc->exec($sql);
+			if ($affected == 0) {
+				echo "We were unable to store your information";
+			} else {
+				echo "<p>We saved your information </p>";
+			}
+			require("./includes/footer.php");
+			exit;
+		} catch (PDOException $e) {
+			echo $e->getMessage();
 		}
-		echo "</ul>";
-		echo "<p>You heard about us how: " . htmlspecialchars($select) . "</p>";
-		echo "<p>" . htmlspecialchars($terms) . "</p>";
-		require("./includes/footer.php");
-		exit;
 	}
 }
 ?>
