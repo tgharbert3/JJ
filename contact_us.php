@@ -1,3 +1,4 @@
+<!-- Tyler Harbert -->
 <?php require("./includes/header.php") ?>
 
 <?php
@@ -76,203 +77,213 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 	}
 
 	if (isset($_GET['select']) && $_GET['select'] !== "Select One") {
-		$select = $_GET['select'];
+		//To be able to fit in db. varchar(20)
+		if ($_GET['select'] === "Recommended by friends") {
+			$select = "Friends";
+		} else {
+			$select = $_GET['select'];
+		}
+		
 	} else {
 		$missing['select'] = "You must select one";
 	}
 
 	if (empty($missing)) {
-		try {
 			if (isset($$lastName)) {
-				echo "<h3> Thank you " . htmlspecialchars($firstName) . " " . htmlspecialchars($lastName) . " for contacting us</h3>";
+				echo "<h2> Thank you " . htmlspecialchars($firstName) . " " . htmlspecialchars($lastName) . " for contacting us</h2>";
 			} else {
-				echo "<h3> Thank you " . htmlspecialchars($firstName) . "for contacting us.</h3>";
+				echo "<h2> Thank you " . htmlspecialchars($firstName) . " for contacting us.</h2>";
 			}
 			require_once('../../pdo_connect.php');
-			$sql = "INSERT INTO JJ_contacts (firstName, lastName, emailAddr, comments, newsletter, howhear, anime,
-				arts, judo, lang, sci, travel) VALUES ('$firstName', '$lastName', '$email', '$comments', '$subscribe',
-				'$select', '$anime', '$arts', '$judo', '$langauge', '$science', '$travel')";
-			$affected = $dbc->exec($sql);
-			if ($affected == 0) {
-				echo "We were unable to store your information";
-			} else {
-				echo "<p>We saved your information </p>";
+			try {
+				
+				$sqlCheck = "SELECT * FROM JJ_contacts WHERE emailAddr = '$email'";
+				$result = $dbc->query($sqlCheck);
+				if ($result->rowCount() > 0) {
+					echo "<p>Email has already been used. Please try another.</p>";
+					include('./includes/footer.php');
+					exit;
+				} else {
+					$sql = "INSERT INTO JJ_contacts (firstName, lastName, emailAddr, comments, newsletter, howhear, anime,
+						arts, judo, lang, sci, travel) VALUES ('$firstName', '$lastName', '$email', '$comments', '$subscribe',
+						'$select', '$anime', '$arts', '$judo', '$langauge', '$science', '$travel')";
+					$affected = $dbc->exec($sql);
+					if ($affected == 0) {
+						echo "We were unable to store your information";
+					} else {
+						echo "<p>We saved your information </p>";
+					}
+				}
+			} catch (Exception $e) {
+				echo "". $e->getMessage() ."";
 			}
 			require("./includes/footer.php");
 			exit;
-		} catch (PDOException $e) {
-			echo $e->getMessage();
-		}
 	}
 }
 ?>
-<main>
-	<h2>Japan Journey</h2>
-	<p>Ut enim ad minim veniam, quis nostrud exercitation consectetur adipisicing elit. Velit esse cillum dolore
-		ullamco laboris nisi in reprehenderit in voluptate. Mollit anim id est laborum. Sunt in culpa duis aute
-		irure dolor excepteur sint occaecat.</p>
-	<form method="get" action="contact_us.php">
-		<fieldset>
-			<legend>Contact Us</legend>
+<h2>Japan Journey</h2>
+<p>Ut enim ad minim veniam, quis nostrud exercitation consectetur adipisicing elit. Velit esse cillum dolore
+	ullamco laboris nisi in reprehenderit in voluptate. Mollit anim id est laborum. Sunt in culpa duis aute
+	irure dolor excepteur sint occaecat.</p>
+<form method="get" action="contact_us.php">
+	<fieldset>
+		<legend>Contact Us</legend>
+		<?php
+		if (isset($missing)) {
+			echo '<h3 class="warning"> Please fix the following: </h3>';
+		}
+		?>
+		<p>
 			<?php
-			if (isset($missing)) {
-				echo '<h3 class="warning"> Please fix the following: </h3>';
+			if (!empty($missing['name'])) {
+				echo '<span class="warning">' . $missing['name'] . '</span>';
 			}
 			?>
-			<p>
-				<?php
-				if (!empty($missing['name'])) {
-					echo '<span class="warning">' . $missing['name'] . '</span>';
-				}
-				?>
-				<label for="name">Name</label>
-				<input type="text" name="name" id=name <?php
-				if (isset($name)) {
-					echo ' value = "' . htmlspecialchars($name) . '"';
-				}
-				?>>
+			<label for="name">Name</label>
+			<input type="text" name="name" id=name <?php
+			if (isset($name)) {
+				echo ' value = "' . htmlspecialchars($name) . '"';
+			}
+			?>>
+		</p>
 
-			</p>
-
-			<p>
-				<?php
-				if (!empty($missing['email'])) {
-					echo '<span class="warning">' . $missing['email'] . '</span>';
-				}
-				?>
-				<label for="email">Email:</label>
-				<input type="text" name="email" id="email" <?php
-				if (isset($email)) {
-					echo ' value = "' . htmlspecialchars($email) . '"';
-				}
-				?>>
-			</p>
-
-			<p>
-				<label>Comments: </label>
-				<textarea name="comments"><?php
-				if (isset($comments)) {
-					echo htmlspecialchars($comments);
-				}
-				?></textarea>
-			</p>
-
-		</fieldset>
-		<fieldset id="subscribe">
-			<h2>Subscribe to newsletter?</h2>
+		<p>
 			<?php
-			if (isset($missing['subscribe'])) {
-				echo '<p class="warning">' . $missing['subscribe'] . '</p>';
+			if (!empty($missing['email'])) {
+				echo '<span class="warning">' . $missing['email'] . '</span>';
 			}
 			?>
-			<p>
-				<label><input type="radio" name="subscribe" value="yes" <?php
-				if (isset($subscribe) && $subscribe === "yes") {
-					echo ' checked="checked"';
-				}
-				?>>Yes </label><br>
-			</p>
-			<p>
-				<label><input type="radio" name="subscribe" value="no" <?php
-				if (isset($subscribe) && $subscribe === 'no') {
-					echo ' checked="checked"';
-				}
-				?>>No </label><br>
-			</p>
-		</fieldset>
-		<fieldset id="interests">
-
-			<h2>Interests in Japan</h2>
-			<?php
-			if (isset($missing['interests'])) {
-				echo '<p class="warning">' . $missing['interests'] . '</p>';
+			<label for="email">Email:</label>
+			<input type="text" name="email" id="email" <?php
+			if (isset($email)) {
+				echo ' value = "' . htmlspecialchars($email) . '"';
 			}
-			?>
-			<div>
-				<p><label><input type="checkbox" name="interests[]" value="anime" <?php
-				if (isset($interests) && in_array("anime", $interests)) {
-					echo " checked";
-				}
-				?>> Anime/Manga</label></p>
-				<p><label><input type="checkbox" name="interests[]" value="arts" <?php
-				if (isset($interests) && in_array("arts", $interests)) {
-					echo " checked";
-				}
-				?>> Arts & Crafts</label></p>
-				<p><label><input type="checkbox" name="interests[]" value="judo" <?php
-				if (isset($interests) && in_array("judo", $interests)) {
-					echo " checked";
-				}
-				?>> Judo, karate, etc. </label>
-				</p>
-			</div>
-			<div>
-				<p><label><input type="checkbox" name="interests[]" value="language" <?php
-				if (isset($interests) && in_array("language", $interests)) {
-					echo " checked";
-				}
-				?>> Language/literature
-					</label> </p>
-				<p><label><input type="checkbox" name="interests[]" value="science" <?php
-				if (isset($interests) && in_array("science", $interests)) {
-					echo " checked";
-				}
-				?>> Science &
-						technology</label> </p>
-				<p><label><input type="checkbox" name="interests[]" value="travel" <?php
-				if (isset($interests) && in_array("travel", $interests)) {
-					echo " checked";
-				}
-				?>> Travel </label></p>
-			</div>
-		</fieldset>
-		<fieldset>
+			?>>
+		</p>
 
-			<h2>How did you hear of Japan Journey?</h2>
-			<?php
-			if (isset($missing['select'])) {
-				echo '<p class="warning">' . $missing['select'] . '</p>';
+		<p>
+			<label>Comments: </label>
+			<textarea name="comments"><?php
+			if (isset($comments)) {
+				echo htmlspecialchars($comments);
 			}
-			?>
-			<p>
-				<select name="select">
-					<option>Select One</option>
-					<option <?php
-					if (isset($select) && $select === "Social Media") {
-						echo " selected";
-					}
-					?>>Social
-						Media </option>
+			?></textarea>
+		</p>
 
-					<option <?php
-					if (isset($select) && $select === "Recommended by friends") {
-						echo " selected";
-					}
-					?>>Recommended
-						by friends</option>
-					<option>Search Engine </option>
-				</select>
-			</p>
-
-			<?php
-			if (isset($missing['terms'])) {
-				echo '<p class="warning">' . $missing['terms'] . '</p>';
+	</fieldset>
+	<fieldset id="subscribe">
+		<h2>Subscribe to newsletter?</h2>
+		<?php
+		if (isset($missing['subscribe'])) {
+			echo '<p class="warning">' . $missing['subscribe'] . '</p>';
+		}
+		?>
+		<p>
+			<label><input type="radio" name="subscribe" value="yes" <?php
+			if (isset($subscribe) && $subscribe === "yes") {
+				echo ' checked="checked"';
 			}
-			?>
-			<p><label><input type="checkbox" name="terms" <?php
-			if (isset($terms)) {
+			?>>Yes </label><br>
+		</p>
+		<p>
+			<label><input type="radio" name="subscribe" value="no" <?php
+			if (isset($subscribe) && $subscribe === 'no') {
+				echo ' checked="checked"';
+			}
+			?>>No </label><br>
+		</p>
+	</fieldset>
+	<fieldset id="interests">
+
+		<h2>Interests in Japan</h2>
+		<?php
+		if (isset($missing['interests'])) {
+			echo '<p class="warning">' . $missing['interests'] . '</p>';
+		}
+		?>
+		<div>
+			<p><label><input type="checkbox" name="interests[]" value="anime" <?php
+			if (isset($interests) && in_array("anime", $interests)) {
 				echo " checked";
 			}
-			?>> I agree
-					to terms and conditions</label></p>
-
-			<p>
-				<input type="submit" name="submit" value="Submit">
-				<input type="reset" name="reset" value="reset">
+			?>> Anime/Manga</label></p>
+			<p><label><input type="checkbox" name="interests[]" value="arts" <?php
+			if (isset($interests) && in_array("arts", $interests)) {
+				echo " checked";
+			}
+			?>> Arts & Crafts</label></p>
+			<p><label><input type="checkbox" name="interests[]" value="judo" <?php
+			if (isset($interests) && in_array("judo", $interests)) {
+				echo " checked";
+			}
+			?>> Judo, karate, etc. </label>
 			</p>
-		</fieldset>
-	</form>
+		</div>
+		<div>
+			<p><label><input type="checkbox" name="interests[]" value="language" <?php
+			if (isset($interests) && in_array("language", $interests)) {
+				echo " checked";
+			}
+			?>> Language/literature
+				</label> </p>
+			<p><label><input type="checkbox" name="interests[]" value="science" <?php
+			if (isset($interests) && in_array("science", $interests)) {
+				echo " checked";
+			}
+			?>> Science &
+					technology</label> </p>
+			<p><label><input type="checkbox" name="interests[]" value="travel" <?php
+			if (isset($interests) && in_array("travel", $interests)) {
+				echo " checked";
+			}
+			?>> Travel </label></p>
+		</div>
+	</fieldset>
+	<fieldset>
 
-</main>
+		<h2>How did you hear of Japan Journey?</h2>
+		<?php
+		if (isset($missing['select'])) {
+			echo '<p class="warning">' . $missing['select'] . '</p>';
+		}
+		?>
+		<p>
+			<select name="select">
+				<option>Select One</option>
+				<option <?php
+				if (isset($select) && $select === "Social Media") {
+					echo " selected";
+				}
+				?>>Social
+					Media </option>
 
+				<option <?php
+				if (isset($select) && $select === "Recommended by friends") {
+					echo " selected";
+				}
+				?>>Recommended
+					by friends</option>
+				<option>Search Engine </option>
+			</select>
+		</p>
+
+		<?php
+		if (isset($missing['terms'])) {
+			echo '<p class="warning">' . $missing['terms'] . '</p>';
+		}
+		?>
+		<p><label><input type="checkbox" name="terms" <?php
+		if (isset($terms)) {
+			echo " checked";
+		}
+		?>> I agree
+				to terms and conditions</label></p>
+
+		<p>
+			<input type="submit" name="submit" value="Submit">
+			<input type="reset" name="reset" value="reset">
+		</p>
+	</fieldset>
+</form>
 <?php require("./includes/footer.php") ?>
