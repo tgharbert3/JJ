@@ -89,29 +89,49 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Submit') {
 	}
 
 	if (empty($missing)) {
-			if (isset($$lastName)) {
+			if (isset($lastName)) {
 				echo "<h2> Thank you " . htmlspecialchars($firstName) . " " . htmlspecialchars($lastName) . " for contacting us</h2>";
 			} else {
 				echo "<h2> Thank you " . htmlspecialchars($firstName) . " for contacting us.</h2>";
 			}
 			require_once('../../pdo_connect.php');
 			try {
-				
-				$sqlCheck = "SELECT * FROM JJ_contacts WHERE emailAddr = '$email'";
-				$result = $dbc->query($sqlCheck);
-				if ($result->rowCount() > 0) {
+				$sql = "SELECT * FROM JJ_contacts WHERE emailAddr = :em";
+				$stmt = $dbc->prepare($sql);
+				$stmt->bindParam(":em", $email);
+				$stmt->execute();
+				$result = $stmt->fetch();
+				$numRows = $stmt->rowCount();
+				$stmt->closeCursor();
+				if ($numRows > 0 ) {
 					echo "<p>Email has already been used. Please try another.</p>";
+					
 					include('./includes/footer.php');
 					exit;
 				} else {
 					$sql = "INSERT INTO JJ_contacts (firstName, lastName, emailAddr, comments, newsletter, howhear, anime,
-						arts, judo, lang, sci, travel) VALUES ('$firstName', '$lastName', '$email', '$comments', '$subscribe',
-						'$select', '$anime', '$arts', '$judo', '$langauge', '$science', '$travel')";
-					$affected = $dbc->exec($sql);
-					if ($affected == 0) {
-						echo "We were unable to store your information";
+						arts, judo, lang, sci, travel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					
+					$stmt=$dbc->prepare($sql);
+					$stmt->bindParam(1, $firstName);
+					$stmt->bindParam(2, $lastName);
+					$stmt->bindParam(3, $email);
+					$stmt->bindParam(4, $comments);
+					$stmt->bindParam(5, $subscribe);
+					$stmt->bindParam(6, $select);
+					$stmt->bindParam(7, $anime);
+					$stmt->bindParam(8, $arts);
+					$stmt->bindParam(9, $judo);
+					$stmt->bindParam(10, $langauge);
+					$stmt->bindParam(11, $science);
+					$stmt->bindParam(12, $travel);
+					
+					$stmt->execute();
+					$numRows = $stmt->rowCount();
+					if ($numRows == 1) {
+						echo "<p>We saved your information </p>" ;
 					} else {
-						echo "<p>We saved your information </p>";
+						echo "We were unable to store your information";
 					}
 				}
 			} catch (Exception $e) {
