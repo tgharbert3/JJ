@@ -40,16 +40,17 @@ if (isset($_GET["image_id"])) {
 				$imageCaption = $row['caption'];
 			}
 			if ($counter % COLS == 0) {
+				$caption = $row['caption'];
 				echo "<tr>";
 				echo "<td>";
-				echo "<a href=gallery.php?image_id=" . $row['image_id'] . ">";
-				echo "<img src=./images/thumbs/" . $row['filename'] . " alt=" . $row['caption'] . " width='80' height='54'>";
+				echo '<a href="gallery.php?image_id=' . $row['image_id'] . '">';
+				echo '<img src="./images/thumbs/' . $row['filename'] . '" alt="' . $row['caption'] . '" width="80" height="54">';
 				echo "</a>";
 				echo "</td>";
 			} else {
 				echo "<td>";
-				echo "<a href=gallery.php?image_id=" . $row['image_id'] . ">";
-				echo " <img src=./images/thumbs/" . $row['filename'] . " alt=" . $row['caption'] . " width='80' height='54'>";
+				echo '<a href="gallery.php?image_id=' . $row['image_id'] . '">';
+				echo '<img src="./images/thumbs/' . $row['filename'] . '" alt="' . $row['caption'] . '" width="80" height="54">';
 				echo "</a>";
 				echo "</td>";
 				echo "</tr>";
@@ -60,16 +61,14 @@ if (isset($_GET["image_id"])) {
 	<figure id="main_image">
 		<?php
 		if (isset($_GET["image_id"])) {
-			echo "<img src=./images/$imageToShow alt=$imageCaption>";
+			echo '<img src="./images/' . $imageToShow . '" alt="' . $imageCaption . '">';
 			$shortCaption = shortTitle($imageCaption);
 			echo "<figcaption>$shortCaption</figcaption>";
 		} else {
-			echo "<img src=./images/basin.jpg alt=''";
-			echo "<figcaption>Water basin at Ryoanji temple, Kyoto</figcaption>";
+			echo '<img src="./images/basin.jpg" alt="" >';
+			echo '<figcaption>"Water basin at Ryoanji temple, Kyoto"</figcaption>';
 		}
 		?>
-
-
 	</figure>
 </section>
 <?php include 'includes/footer.php'; ?>
