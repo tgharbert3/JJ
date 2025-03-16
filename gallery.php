@@ -1,5 +1,9 @@
 <?php
 require 'includes/header.php';
+define("ROWS", 3);
+define("NUM_IMAGES", 6);
+define("COLS", 2);
+
 function shortTitle($title)
 {
 	$title = substr($title, 0, -4); #remove the .ext from each title
@@ -8,23 +12,29 @@ function shortTitle($title)
 	return $title;
 }
 
+$pageNum = $_GET['page'];
+$startImg = ($pageNum - 1) * NUM_IMAGES + 1;
+$offset = $startImg - 1;
+$endImage = $offset + 6;
+
 require_once('../../pdo_connect.php');
 try {
-	$sql = "SELECT * FROM JJ_images";
+	$sql = "SELECT * FROM JJ_images LIMIT $offset, " . NUM_IMAGES;
+	$sqlAll = "SELECT * FROM JJ_images";
 	$result = $dbc->query($sql);
-	$picNum = $result->rowCount();
+	$all = $dbc->query($sqlAll);
+	$picNum = $all->rowCount();
 } catch (Exception $e) {
 	echo $e->getMessage();
 }
-define("COLS", 2);
 ?>
 <h2>Japan Journey</h2>
 <?php
 if (isset($_GET["image_id"])) {
 	$imgNum = $_GET['image_id'];
-	echo "<p id='picCount'> Displaying 1 to $imgNum of $picNum </p>";
+	echo "<p id='picCount'> Showing $startImg - $imgNum of $picNum </p>";
 } else {
-	echo "<p id='picCount'> Displaying 1 to 1 of $picNum </p>";
+	echo "<p id='picCount'> Showing 1 - 1 of $picNum </p>";
 }
 ?>
 <section id="gallery">
@@ -34,6 +44,7 @@ if (isset($_GET["image_id"])) {
 			$image_id = $_GET['image_id'];
 		}
 		$counter = 0;
+
 		foreach ($result as $row) {
 			if ($row['image_id'] == $image_id) {
 				$imageToShow = $row['filename'];
@@ -43,21 +54,37 @@ if (isset($_GET["image_id"])) {
 				$caption = $row['caption'];
 				echo "<tr>";
 				echo "<td>";
-				echo '<a href="gallery.php?image_id=' . $row['image_id'] . '">';
+				echo '<a href="gallery.php?page=' . $pageNum . '&image_id=' . $row['image_id'] . '">';
 				echo '<img src="./images/thumbs/' . $row['filename'] . '" alt="' . $row['caption'] . '" width="80" height="54">';
 				echo "</a>";
 				echo "</td>";
 			} else {
 				echo "<td>";
-				echo '<a href="gallery.php?image_id=' . $row['image_id'] . '">';
+				echo '<a href="gallery.php?page=' . $pageNum . '&image_id=' . $row['image_id'] . '">';
 				echo '<img src="./images/thumbs/' . $row['filename'] . '" alt="' . $row['caption'] . '" width="80" height="54">';
 				echo "</a>";
 				echo "</td>";
 				echo "</tr>";
 			}
 			$counter += 1;
-		} ?>
+		}
+		if ($pageNum == 1) {
+			echo '<tr><td>' . "" . '</td>';
+			echo "<td>" . '<a href="gallery.php?page=' . ($pageNum + 1) . '&image_id=7">' . "Next>></a>" . "</td></tr>";
+		}
+		if ($pageNum > 1 && $endImage < $picNum) {
+			echo '<tr><td>' . '<a href="gallery.php?page=' . ($pageNum - 1) . '"> &lt;&lt; Prev' . '</td>';
+			echo "<td>" . '<a href="gallery.php?page=' . ($pageNum + 1) . '&image_id=7">' . "Next>></a>" . "</td></tr>";
+		}
+		if ($pageNum > 1 && $endImage > $picNum) {
+			echo '<tr><td>' . '<a href="gallery.php?page=' . ($pageNum - 1) . '"> &lt;&lt; Prev</a>' . '</td>';
+		}
+
+		?>
 	</table>
+	<?php
+
+	?>
 	<figure id="main_image">
 		<?php
 		if (isset($_GET["image_id"])) {

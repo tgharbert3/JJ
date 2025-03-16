@@ -7,7 +7,7 @@ $currentPage = basename($_SERVER['SCRIPT_FILENAME']); ?>
 	<li><a href="blog.php" <?php if ($currentPage == 'blog.php') {
 		echo 'id="here"';
 	} ?>>Blog</a></li>
-	<li><a href="gallery.php" <?php if ($currentPage == 'gallery.php') {
+	<li><a href="gallery.php?page=1" <?php if ($currentPage == 'gallery.php') {
 		echo 'id="here"';
 	} ?>>Gallery</a></li>
 	<li><a href="product_list.php" <?php if ($currentPage == 'product_list.php') {
