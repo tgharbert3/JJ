@@ -12,18 +12,26 @@ function shortTitle($title)
 	return $title;
 }
 
+require_once('../../pdo_connect.php');
+try {
+	$sqlAll = "SELECT * FROM JJ_images";
+	$all = $dbc->query($sqlAll);
+	$picNum = $all->rowCount();
+} catch (Exception $e) {
+	echo $e->getMessage();
+}
 $pageNum = $_GET['page'];
 $startImg = ($pageNum - 1) * NUM_IMAGES + 1;
 $offset = $startImg - 1;
-$endImage = $offset + 6;
-
+if ($startImg + NUM_IMAGES > $picNum) {
+	$endImage = $picNum;
+} else {
+	$endImage = $offset + 6;
+}
 require_once('../../pdo_connect.php');
 try {
 	$sql = "SELECT * FROM JJ_images LIMIT $offset, " . NUM_IMAGES;
-	$sqlAll = "SELECT * FROM JJ_images";
 	$result = $dbc->query($sql);
-	$all = $dbc->query($sqlAll);
-	$picNum = $all->rowCount();
 } catch (Exception $e) {
 	echo $e->getMessage();
 }
@@ -32,9 +40,9 @@ try {
 <?php
 if (isset($_GET["image_id"])) {
 	$imgNum = $_GET['image_id'];
-	echo "<p id='picCount'> Showing $startImg - $imgNum of $picNum </p>";
+	echo "<p id='picCount'> Showing $startImg - $endImage of $picNum </p>";
 } else {
-	echo "<p id='picCount'> Showing 1 - 1 of $picNum </p>";
+	echo "<p id='picCount'> Showing 1 - $endImage of $picNum </p>";
 }
 ?>
 <section id="gallery">
@@ -76,7 +84,7 @@ if (isset($_GET["image_id"])) {
 			echo '<tr><td>' . '<a href="gallery.php?page=' . ($pageNum - 1) . '"> &lt;&lt; Prev' . '</td>';
 			echo "<td>" . '<a href="gallery.php?page=' . ($pageNum + 1) . '&image_id=7">' . "Next>></a>" . "</td></tr>";
 		}
-		if ($pageNum > 1 && $endImage > $picNum) {
+		if ($pageNum > 1 && $endImage == $picNum) {
 			echo '<tr><td>' . '<a href="gallery.php?page=' . ($pageNum - 1) . '"> &lt;&lt; Prev</a>' . '</td>';
 		}
 
