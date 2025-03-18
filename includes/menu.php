@@ -17,4 +17,20 @@ $currentPage = basename($_SERVER['SCRIPT_FILENAME']); ?>
 	<li><a href="contact_us.php" <?php if ($currentPage == 'contact_us.php') {
 		echo 'id="here"';
 	} ?>>Contact</a></li>
+	<?php
+	if (!isset($_SESSION['first_name'])) {
+		echo '<li><a href="create_acct.php"';
+		if ($currentPage == 'create_acct.php') {
+			echo 'id="here"';
+		}
+		echo '> Register</a></li>';
+		echo '<li><a href="login.php"';
+		if ($currentPage == 'login.php') {
+			echo 'id="here"';
+		}
+		echo '> Login</a></li>';
+	} else {
+		echo '<li><a href="logged_out.php">Logout</a></li>';
+	}
+	?>
 </ul>

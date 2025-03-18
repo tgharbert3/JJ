@@ -52,7 +52,6 @@ if (isset($_GET["image_id"])) {
 			$image_id = $_GET['image_id'];
 		}
 		$counter = 0;
-
 		foreach ($result as $row) {
 			if ($row['image_id'] == $image_id) {
 				$imageToShow = $row['filename'];
