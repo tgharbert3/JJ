@@ -1,4 +1,5 @@
 <?php
+require_once '../reg_conn.php';
 require('includes/header.php');
 if (isset($_COOKIE['PHPSESSID'])) {
     if (!empty($_SESSION['first_name'])) {

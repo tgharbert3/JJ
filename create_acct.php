@@ -1,5 +1,5 @@
 <?php //This page checks for required content, errors, and provides sticky output
-
+require_once '../secure_conn.php';
 require 'includes/header.php';
 if (isset($_POST['send']) && $_POST['send'] == "Register") {
 	$errors = array();
