@@ -1,6 +1,7 @@
-<?php //This page checks for required content, errors, and provides sticky output
+<?php
+session_start();
+require 'includes/header.php';//This page checks for required content, errors, and provides sticky output
 require_once '../secure_conn.php';
-require 'includes/header.php';
 if (isset($_POST['send']) && $_POST['send'] == "Register") {
 	$errors = array();
 
@@ -55,8 +56,9 @@ if (isset($_POST['send']) && $_POST['send'] == "Register") {
 			$numRows = $stmt2->rowCount();
 			if ($numRows != 1)
 				echo "<h2>We are unable to process your request at  this  time. Please try again later.</h2>";
-			else
-				echo "<h2>Thank you $firstname $lastname for registering</h2><h3>Please use the menu to login.</h3>";
+			else {
+				header('Location: ./acc_created.php?first=' . $firstname . '&last=' . $lastname);
+			}
 			include 'includes/footer.php';
 			exit;
 

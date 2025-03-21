@@ -1,4 +1,5 @@
 <?php //This is the login page for registered users
+require_once '../secure_conn.php';
 require 'includes/header.php';
 if (isset($_POST['send']) && $_POST['send'] == "Login") {
 	$errors = array();
