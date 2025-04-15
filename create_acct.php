@@ -13,7 +13,8 @@ if (isset($_POST['send']) && $_POST['send'] == "Register") {
 	if (empty($lastname))
 		$errors['lastname'] = "Last name is required";
 
-	$valid_email = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL);	//returns a string or null if empty or false if not valid	
+	$valid_email = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL);
+	//returns a string or null if empty or false if not valid	
 	if (empty($_POST['email']))
 		$errors['email'] = 'Please enter an email address';
 	elseif (!$valid_email)
@@ -44,19 +45,27 @@ if (isset($_POST['send']) && $_POST['send'] == "Register") {
 			$errors['exists'] = "That email address is already registered.";
 
 		if (!$errors) {
-
-			$sql2 = "INSERT INTO JJ_reg_users (firstName, lastName, emailAddr, pw) VALUES (?, ?, ?, ?)";
+			$folder = preg_replace('/[^a-zA-Z0-9]/', "", $email);
+			$folder = strtolower($folder);
+			$sql2 = "INSERT INTO JJ_reg_users (firstName, lastName, emailAddr, pw, folder) VALUES (?, ?, ?, ?,?)";
 			$stmt2 = $dbc->prepare($sql2);
 			$pw_hash = password_hash($password, PASSWORD_DEFAULT);
 			$stmt2->bindParam(1, $firstname);
 			$stmt2->bindParam(2, $lastname);
 			$stmt2->bindParam(3, $email);
 			$stmt2->bindParam(4, $pw_hash);
+			$stmt2->bindParam(5, $folder);
 			$stmt2->execute();
 			$numRows = $stmt2->rowCount();
-			if ($numRows != 1)
+			if ($numRows != 1) {
 				echo "<h2>We are unable to process your request at  this  time. Please try again later.</h2>";
-			else {
+			} else {
+
+				$dirpath = "../../uploads/$folder";
+				mkdir($dirpath, 0777);
+				$_SESSION['first_name'] = $firstname;
+				$_SESSION['last_name'] = $lastname;
+				$_SESSION['folder'] = $folder;
 				header('Location: ./acc_created.php?first=' . $firstname . '&last=' . $lastname);
 			}
 			include 'includes/footer.php';

@@ -30,12 +30,14 @@ if (isset($_POST['send']) && $_POST['send'] == "Login") {
 			else { // email found, validate password
 				$result = $stmt->fetch(); //convert the result object pointer to an associative array 
 				$pw_hash = $result['pw'];
+				$folderName = $result['folder'];
 				if (password_verify($password, $pw_hash)) { //passwords match
 					$firstname = $result['firstName'];
 					//your code here
 					session_start();
 					$_SESSION['first_name'] = $firstname;
 					$_SESSION['user_email'] = $email;
+					$_SESSION['folder'] = $folderName;
 					header('Location: ./logged_in.php');
 					exit;
 				} else {

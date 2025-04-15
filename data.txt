@@ -1,0 +1,6 @@
+FILE		CAPTION				PRICE	DESCRIPTION
+art.gif		Temple at Sunset	49.99	An 8x10 print
+city.png	A Bustling City		14.99	A 4x6 postcard
+pond.gif	Pond with Koi		89.99 	A 5x7 watercolor
+sun.png	The Rising Sun Flag 	12.99	A 3.5x5 postcard
+view.jpg	Stunning Scenery	124.99	A 16x20 poster

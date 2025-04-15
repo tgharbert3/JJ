@@ -17,6 +17,7 @@ $currentPage = basename($_SERVER['SCRIPT_FILENAME']); ?>
 	<li><a href="contact_us.php" <?php if ($currentPage == 'contact_us.php') {
 		echo 'id="here"';
 	} ?>>Contact</a></li>
+
 	<?php
 	if (!isset($_SESSION['first_name'])) {
 		echo '<li><a href="create_acct.php"';
@@ -30,7 +31,21 @@ $currentPage = basename($_SERVER['SCRIPT_FILENAME']); ?>
 		}
 		echo '> Login</a></li>';
 	} else {
+		echo '<li><a href="upload_image.php"';
+		if ($currentPage == 'upload_image.php') {
+			echo 'id="here"';
+		}
+		echo '> Upload Photo</a></li>';
+
+		echo '<li><a href="my_images.php"';
+		if ($currentPage == 'my_images.php') {
+			echo 'id="here"';
+		}
+		echo '> View Images</a></li>';
+
 		echo '<li><a href="logged_out.php">Logout</a></li>';
 	}
 	?>
+
+
 </ul>
